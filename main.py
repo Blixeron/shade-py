@@ -12,7 +12,7 @@ class Dust(commands.Bot):
             help_command=None,
             intents=Intents.default(),
             application_id=os.getenv('APP_ID')
-            )
+        )
 
     async def setup_hook(self):
         for file in os.listdir('./cogs'):
