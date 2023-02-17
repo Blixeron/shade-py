@@ -3,17 +3,15 @@ from discord.ext import commands
 import random
 
 class Fun(commands.Cog):
-    """Miscellaneous commands."""
+    """Commands made for fun and enjoyment."""
 
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(
-        name='8ball',
-        description='Ask the magic 8 Ball a question'
-    )
+    @app_commands.command(name='8ball', description='Ask the magic 8 Ball a question')
     @app_commands.describe(question='Ask something')
-    async def eightball(self, interaction: Interaction, question: str):
+
+    async def eightball(self, interaction: Interaction, question: app_commands.Range[str, 0, 1000]):
         answers = [
             'It is certain.', 'It is decidedly so.', 'Without a doubt.',
             'Yes - definitely.', 'You may rely on it.', 'As I see it, yes.',
@@ -29,14 +27,21 @@ class Fun(commands.Cog):
             '✨ Y E S ✨', '✨ N O ✨', '✨ I D K ✨'
         ]
 
-        if len(question) > 1900:
-            await interaction.response.send_message(
-                "That's a bit too long for me to answer...", ephemeral=True
-            )
-        else:
-            await interaction.response.send_message(
-                f'{question if question.endswith("?") else f"{question}?"}\n**{random.choice(answers)}**'
-            )
+        await interaction.response.send_message(
+            f'{question if question.endswith("?") else f"{question}?"}\n**{random.choice(answers)}**'
+        )
+
+
+    @app_commands.command(name='how', description='Rate how much of anything is someone or something')
+    @app_commands.describe(
+        target='Type in what or who you want to calculate the percentage of',
+        input='Type in what you want to calculate'
+    )
+
+    async def how(self, interaction: Interaction, target: app_commands.Range[str, 0, 500], input: app_commands.Range[str, 0, 500]):
+        await interaction.response.send_message(
+            f'{target} is **{random.randint(0, 100)}%** {input}.'
+        )
 
 async def setup(bot):
     await bot.add_cog(Fun(bot))
