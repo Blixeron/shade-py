@@ -49,7 +49,7 @@ class Owner(commands.Cog):
         """Loads a mddule."""
         try:
             await ctx.message.add_reaction('\u2705')
-            self.bot.load_extension(f'cogs.{module}')
+            await self.bot.load_extension(f'cogs.{module}')
         except Exception as e:
             await ctx.reply('{}: {}'.format(type(e).__name__, e))
         else:
@@ -61,7 +61,7 @@ class Owner(commands.Cog):
         """Reloads a module."""
         try:
             await ctx.message.add_reaction('\u2705')
-            self.bot.reload_extension(f'cogs.{module}')
+            await self.bot.reload_extension(f'cogs.{module}')
         except commands.ExtensionError as e:
             await ctx.reply(f'{e.__class__.__name__}: {e}')
         else:
