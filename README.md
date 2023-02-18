@@ -2,7 +2,7 @@
 
 ## Instalation
 
-Clone this repository, and install the discord.py library by using `python3 -m pip install discord.py` or (if you are in Windows): `py -3 -m pip install discord.py`. Then you can start the bot by running the `main.py` file.
+Clone this repository, and install the dependencies by using `python3 -m pip install -r requirements.txt` or (if you are in Windows): `py -m pip install -r requirements.txt`. Then you can start the bot by running the `main.py` file.
 
 ## .env File
 

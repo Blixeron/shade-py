@@ -4,8 +4,11 @@ from discord import *
 class Information(commands.Cog):
     """This Cog has commands that show information from different sources."""
 
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
+
+    def asd():
+        print('asd')
     
     @app_commands.command(
         name='ping',

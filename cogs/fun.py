@@ -5,7 +5,7 @@ import random
 class Fun(commands.Cog):
     """Commands made for fun and enjoyment."""
 
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     @app_commands.command(name='8ball', description='Ask the magic 8 Ball a question')

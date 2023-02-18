@@ -7,12 +7,11 @@ import textwrap
 import traceback
 import asyncio
 import subprocess
-import requests
 
 class Owner(commands.Cog):
     """Commands for the bot developer."""
 
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     @property
@@ -28,11 +27,9 @@ class Owner(commands.Cog):
 
     def cleanup_code(self, content: str) -> str:
         """Automatically removes code blocks from the code."""
-        # remove ```py\n```
         if content.startswith('```') and content.endswith('```'):
             return '\n'.join(content.split('\n')[1:-1])
 
-        # remove `foo`
         return content.strip('` \n')
 
     async def cog_check(self, ctx: commands.Context) -> bool:
@@ -78,8 +75,7 @@ class Owner(commands.Cog):
             'channel': ctx.channel,
             'author': ctx.author,
             'guild': ctx.guild,
-            'message': ctx.message,
-            'requests': requests
+            'message': ctx.message
         }
 
         env.update(globals())
