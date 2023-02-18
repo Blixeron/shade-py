@@ -8,9 +8,9 @@ load_dotenv()
 class Dust(commands.Bot):
     def __init__(self):
         super().__init__(
-            command_prefix='d!',
+            command_prefix='$',
             help_command=None,
-            intents=Intents.default(),
+            intents=Intents.all(),
             application_id=os.getenv('APP_ID')
         )
 

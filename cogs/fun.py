@@ -38,7 +38,12 @@ class Fun(commands.Cog):
         input='Type in what you want to calculate'
     )
 
-    async def how(self, interaction: Interaction, target: app_commands.Range[str, 0, 500], input: app_commands.Range[str, 0, 500]):
+    async def how(
+        self,
+        interaction: Interaction,
+        target: app_commands.Range[str, 0, 500],
+        input: app_commands.Range[str, 0, 500]
+    ):
         await interaction.response.send_message(
             f'{target} is **{random.randint(0, 100)}%** {input}.'
         )
