@@ -18,9 +18,9 @@ class Dust(commands.Bot):
         for file in os.listdir('./cogs'):
             if file.endswith('.py'):
                 await self.load_extension(f'cogs.{file[:-3]}')
-
-                self.tree.copy_global_to(guild=Object(id=os.getenv('GUILD_ID')))
-                await bot.tree.sync(guild=Object(id=os.getenv('GUILD_ID')))
+        
+        self.tree.copy_global_to(guild=Object(id=os.getenv('GUILD_ID')))
+        await bot.tree.sync(guild=Object(id=os.getenv('GUILD_ID')))
 
     async def on_ready(self):
         print(f'{self.user} is ready. ID: {self.user.id}')
