@@ -75,6 +75,7 @@ class Owner(commands.Cog):
                         error_list = [err]
 
                     ctx.reply(f'\n'.join(error_list))
+                    break
                 else:
                     await ctx.reply('All Cogs reloaded.')
                     break
