@@ -70,14 +70,14 @@ class Utility(commands.Cog):
         avatar = (await self.show_avatar(interaction, target or interaction.user, size or 1024, format or None, server))
 
         await interaction.response.send_message(
-            f'{avatar["target"]} - {avatar["size"]} pixels, in {avatar["format"]} format - [Link]({avatar["url"]})'
+            f'**{avatar["target"]}** - {avatar["size"]} pixels, in {avatar["format"]} format - [Link]({avatar["url"]})'
         )
 
     async def user_avatar(self, interaction: Interaction, user: User):
         avatar = (await self.show_avatar(interaction, user))
 
         await interaction.response.send_message(
-            f'{avatar["target"]} - {avatar["size"]} pixels, in {avatar["format"]} format - [Link]({avatar["url"]})',
+            f'**{avatar["target"]}** - {avatar["size"]} pixels, in {avatar["format"]} format - [Link]({avatar["url"]})',
             ephemeral=True
         )
 

@@ -42,7 +42,7 @@ class Owner(commands.Cog):
 
     @commands.command(hidden=True)
     @commands.is_owner()
-    async def load(self, ctx: commands.Context, *, module : str):
+    async def load(self, ctx: commands.Context, *, module: str):
         """Loads a mddule."""
         try:
             await ctx.message.add_reaction('\u2705')
@@ -54,15 +54,30 @@ class Owner(commands.Cog):
 
     @commands.command(aliases=['rl'], hidden=True)
     @commands.is_owner()
-    async def reload(self, ctx: commands.Context, *, module: str):
-        """Reloads a module."""
-        try:
-            await ctx.message.add_reaction('\u2705')
-            await self.bot.reload_extension(f'cogs.{module}')
-        except commands.ExtensionError as e:
-            await ctx.reply(f'{e.__class__.__name__}: {e}')
+    async def reload(self, ctx: commands.Context, *, module: str = None):
+        """Reloads a module, or all of them."""
+        if module:
+            try:
+                await ctx.message.add_reaction('\u2705')
+                await self.bot.reload_extension(f'cogs.{module}')
+            except commands.ExtensionError as e:
+                await ctx.reply(f'{e.__class__.__name__}: {e}')
+            else:
+                await ctx.reply(f'`{module.capitalize()}` has been reloaded.')
         else:
-            await ctx.reply(f'{module.capitalize()} Cog reloaded.')
+            for ext in self.bot.extensions:
+                try:
+                    await ctx.message.add_reaction('\u2705')
+                    await self.bot.reload_extension(ext)
+                except commands.ExtensionError as errors:
+                    error_list
+                    for err in errors:
+                        error_list = [err]
+
+                    ctx.reply(f'\n'.join(error_list))
+                else:
+                    await ctx.reply('All Cogs reloaded.')
+                    break
 
     @commands.command(aliases=['eval'], hidden=True)
     @commands.is_owner()
