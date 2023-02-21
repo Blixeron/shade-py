@@ -79,6 +79,14 @@ class Owner(commands.Cog):
                 else:
                     await ctx.reply('All Cogs reloaded.')
                     break
+    
+    @commands.command(hidden=True)
+    @commands.is_owner()
+    async def sync(self, ctx: commands.Context):
+        """Synchronizes the command tree"""
+
+        await self.bot.tree.sync()
+        await ctx.reply('The command tree has been synced globally.')
 
     @commands.command(aliases=['eval'], hidden=True)
     @commands.is_owner()

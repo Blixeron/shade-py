@@ -10,7 +10,6 @@ class Fun(commands.Cog):
 
     @app_commands.command(name='8ball', description='Ask the magic 8 Ball a question')
     @app_commands.describe(question='Ask something')
-
     async def eightball(self, interaction: Interaction, question: app_commands.Range[str, 0, 1000]):
         answers = [
             'It is certain.', 'It is decidedly so.', 'Without a doubt.',
@@ -31,13 +30,11 @@ class Fun(commands.Cog):
             f'{question if question.endswith("?") else f"{question}?"}\n**{random.choice(answers)}**'
         )
 
-
     @app_commands.command(name='how', description='Rate how much of anything is someone or something')
     @app_commands.describe(
         target='Type in what or who you want to calculate the percentage of',
         input='Type in what you want to calculate'
     )
-
     async def how(
         self,
         interaction: Interaction,
