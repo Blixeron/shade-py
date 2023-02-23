@@ -1,9 +1,7 @@
 import os
 from discord import *
 from discord.ext import commands
-
-from dotenv import load_dotenv
-load_dotenv()
+import config
 
 class Dust(commands.Bot):
     def __init__(self):
@@ -11,8 +9,10 @@ class Dust(commands.Bot):
             command_prefix='$',
             help_command=None,
             intents=Intents.all(),
-            application_id=os.getenv('APP_ID')
+            application_id=config.app_id
         )
+        
+        self.config = config
 
     async def setup_hook(self):
         for file in os.listdir('./cogs'):
@@ -26,4 +26,4 @@ class Dust(commands.Bot):
 
 bot = Dust()
 
-bot.run(os.getenv('TOKEN'))
+bot.run(config.token)

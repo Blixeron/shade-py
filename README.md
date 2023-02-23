@@ -4,15 +4,18 @@
 
 Clone this repository, and install the dependencies by using `python3 -m pip install -r requirements.txt` or (if you are in Windows): `py -m pip install -r requirements.txt`. Then you can start the bot by running the `main.py` file.
 
-## .env File
+## Configuration File
 
-There's a hidden file that stores sensitive information, called `.env`. If you want to run the bot, you must create it inside of the bot's folder.
+There's a hidden file that stores sensitive information, called `config.py`. If you want to run the bot, you must create it inside of the bot's folder.
 
 This is how it looks like:
 
 ```
-TOKEN= Your bot's token.
-GUILD_ID= The development server ID.
-APP_ID= The ID of the bot.
-DEV_ID= The ID of the bot owner.
+token = '' # Your bot's Discord token
+guild_id = '' # The development server ID
+app_id = '' # The ID of your bot
+dev_id = '' # Your own ID
+cat_api_key = '' # The API Key for https://theapicat.com
 ```
+
+You will be able to use the configuration variables inside of other files by using `self.bot.config` property.

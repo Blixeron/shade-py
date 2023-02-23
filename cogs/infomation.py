@@ -1,11 +1,16 @@
+from __future__ import annotations
 from discord.ext import commands
 from discord import *
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from main import Dust
 
 class Information(commands.Cog):
     """This Cog has commands that show information from different sources."""
 
-    def __init__(self, bot: commands.Bot):
-        self.bot = bot
+    def __init__(self, bot: Dust):
+        self.bot: Dust = bot
     
     @app_commands.command(
         name='ping',

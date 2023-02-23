@@ -1,18 +1,22 @@
+from __future__ import annotations
 from discord.ext import commands
 from discord import *
 from contextlib import redirect_stdout
-
 import io
 import textwrap
 import traceback
 import asyncio
 import subprocess
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from main import Dust
 
 class Owner(commands.Cog):
     """Commands for the bot developer."""
 
-    def __init__(self, bot: commands.Bot):
-        self.bot = bot
+    def __init__(self, bot: Dust):
+        self.bot: Dust = bot
 
     @property
     async def run_process(self, command: str) -> list[str]:

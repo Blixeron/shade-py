@@ -1,12 +1,19 @@
+from __future__ import annotations
 from discord import *
 from discord.ext import commands
 import random
+import asyncio
+import aiohttp
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from main import Dust
 
 class Fun(commands.Cog):
     """Commands made for fun and enjoyment."""
 
-    def __init__(self, bot: commands.Bot):
-        self.bot = bot
+    def __init__(self, bot: Dust):
+        self.bot: Dust = bot
 
     @app_commands.command(name='8ball', description='Ask the magic 8 Ball a question')
     @app_commands.describe(question='Ask something')
@@ -44,6 +51,43 @@ class Fun(commands.Cog):
         await interaction.response.send_message(
             f'{target} is **{random.randint(0, 100)}%** {input}.'
         )
+
+    @app_commands.command(name='cat', description='Show a cat image and a cat fact. 😺')
+    async def cat(self, interaction: Interaction):
+        await interaction.response.defer()
+
+        future_fact = self.get_json('https://catfact.ninja/fact')
+        future_image = self.get_json('https://api.thecatapi.com/v1/images/search?limit=1&size=full', {
+            'x-api-key': self.bot.config.cat_api_key
+        })
+
+        fact_json, image_json = await asyncio.gather(future_fact, future_image)
+
+        embed = Embed(title='Cat fact!', description=fact_json['fact'])
+        embed.set_image(url=image_json[0]['url'])
+
+        await interaction.followup.send(embed=embed)
+
+    @app_commands.command(name='dog', description='Show a dog image and a dog fact. 🐶')
+    async def dog(self, interaction: Interaction):
+        await interaction.response.defer()
+
+        future_fact = self.get_json('https://dog-api.kinduff.com/api/facts')
+        future_image = self.get_json('https://api.thedogapi.com/v1/images/search?limit=1&size=full', {
+            'x-api-key': self.bot.config.cat_api_key
+        })
+
+        fact_json, image_json = await asyncio.gather(future_fact, future_image)
+
+        embed = Embed(title='Dog fact!', description=fact_json['facts'][0])
+        embed.set_image(url=image_json[0]['url'])
+
+        await interaction.followup.send(embed=embed)
+
+    async def get_json(self, link, headers=None):
+        async with aiohttp.ClientSession() as session:
+            async with session.get(link, headers=headers) as resp:
+                return await resp.json()
 
 async def setup(bot):
     await bot.add_cog(Fun(bot))
