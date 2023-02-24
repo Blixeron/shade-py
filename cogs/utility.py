@@ -30,7 +30,7 @@ class Utility(commands.Cog):
         format: str = 'PNG' or 'GIF',
         server: bool = False
     ):
-        avatar_url = target.avatar.url
+        avatar = target.avatar
         avatar_hash = target.avatar.key
 
         if server:
@@ -38,7 +38,7 @@ class Utility(commands.Cog):
                 member = (await interaction.guild.fetch_member(target.id))
 
                 if member.guild_avatar:
-                    avatar_url = member.guild_avatar.url
+                    avatar = member.guild_avatar
                     avatar_hash = member.guild_avatar.key
 
         extension = format
@@ -50,11 +50,12 @@ class Utility(commands.Cog):
             extension = 'GIF' if avatar_hash.startswith('a_') else 'PNG'
 
         return {
-            'url': f'{avatar_url.replace(".gif" and ".png", ".").replace("?size=1024", "")}{extension.lower()}?size={size}',
+            'url': f'{avatar.with_format(extension.lower()).with_size(size)}',
             'target': target,
             'size': size,
             'format': format,
-            'server': server
+            'server': server,
+            'property': avatar
         }
 
     @app_commands.command(name='avatar', description='Show the avatar of someone')
@@ -74,17 +75,24 @@ class Utility(commands.Cog):
     ):
         avatar = (await self.show_avatar(interaction, target or interaction.user, size or 1024, format or None, server))
 
-        await interaction.response.send_message(
-            f'**{avatar["target"]}** - {avatar["size"]} pixels, in {avatar["format"]} format - [Link]({avatar["url"]})'
-        )
+        embed = Embed(
+            title=avatar['target'],
+            description=f'''**{avatar["size"]}** pixels, in **{avatar["format"]}** format
+{"**Server Avatar**" if avatar["property"] is Member.guild_avatar else "**Default Avatar**"}'''
+        ).set_image(url=avatar["url"])
+
+        await interaction.response.send_message(embed=embed)
 
     async def user_avatar(self, interaction: Interaction, user: User):
         avatar = (await self.show_avatar(interaction, user))
 
-        await interaction.response.send_message(
-            f'**{avatar["target"]}** - {avatar["size"]} pixels, in {avatar["format"]} format - [Link]({avatar["url"]})',
-            ephemeral=True
-        )
+        embed = Embed(
+            title=avatar['target'],
+            description=f'''**{avatar["size"]}** pixels, in **{avatar["format"]}** format
+{"**Server Avatar**" if avatar["property"] is Member.guild_avatar else "**Default Avatar**"}'''
+        ).set_image(url=avatar["url"])
+
+        await interaction.response.send_message(embed=embed, ephemeral=True)
 
 async def setup(bot):
     await bot.add_cog(Utility(bot))

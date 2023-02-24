@@ -1,9 +1,9 @@
 from __future__ import annotations
 from discord import *
 from discord.ext import commands
+import utils.http
 import random
 import asyncio
-import aiohttp
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -56,8 +56,8 @@ class Fun(commands.Cog):
     async def cat(self, interaction: Interaction):
         await interaction.response.defer()
 
-        future_fact = self.get_json('https://catfact.ninja/fact')
-        future_image = self.get_json('https://api.thecatapi.com/v1/images/search?limit=1&size=full', {
+        future_fact = utils.http.get_json('https://catfact.ninja/fact')
+        future_image = utils.http.get_json('https://api.thecatapi.com/v1/images/search?limit=1&size=full', {
             'x-api-key': self.bot.config.cat_api_key
         })
 
@@ -72,8 +72,8 @@ class Fun(commands.Cog):
     async def dog(self, interaction: Interaction):
         await interaction.response.defer()
 
-        future_fact = self.get_json('https://dog-api.kinduff.com/api/facts')
-        future_image = self.get_json('https://api.thedogapi.com/v1/images/search?limit=1&size=full', {
+        future_fact = utils.http.get_json('https://dog-api.kinduff.com/api/facts')
+        future_image = utils.http.get_json('https://api.thedogapi.com/v1/images/search?limit=1&size=full', {
             'x-api-key': self.bot.config.cat_api_key
         })
 
@@ -83,11 +83,6 @@ class Fun(commands.Cog):
         embed.set_image(url=image_json[0]['url'])
 
         await interaction.followup.send(embed=embed)
-
-    async def get_json(self, link, headers=None):
-        async with aiohttp.ClientSession() as session:
-            async with session.get(link, headers=headers) as resp:
-                return await resp.json()
 
 async def setup(bot):
     await bot.add_cog(Fun(bot))

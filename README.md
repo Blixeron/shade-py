@@ -10,7 +10,7 @@ There's a hidden file that stores sensitive information, called `config.py`. If 
 
 This is how it looks like:
 
-```
+```py
 token = '' # Your bot's Discord token
 guild_id = '' # The development server ID
 app_id = '' # The ID of your bot
