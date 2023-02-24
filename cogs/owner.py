@@ -65,7 +65,7 @@ class Owner(commands.Cog):
                 await ctx.message.add_reaction('\u2705')
                 await self.bot.reload_extension(f'cogs.{module}')
             except commands.ExtensionError as e:
-                await ctx.reply(f'{e.__class__.__name__}: {e}')
+                await ctx.reply('{}: {}'.format(type(e).__name__, e))
             else:
                 await ctx.reply(f'`{module.capitalize()}` has been reloaded.')
     
