@@ -1,8 +1,7 @@
 from __future__ import annotations
 from discord.ext import commands
 from discord import *
-import utils.http
-import asyncio
+import assets.constants as constants
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -24,23 +23,35 @@ class Information(commands.Cog):
         )
         
     ############ WIP ############
-    async def show_user_information(self, bot: Dust, interaction: Interaction, target: User or Member):
-        future_data = utils.http.get_json(f'https://discord.com/api/users/{target.id}', {
-            'Authorization': f'Bot {bot.config.token}'
-        })
+    async def show_user_information(self, interaction: Interaction, target: User or Member):
+        user = await interaction.client.fetch_user(target.id)
 
-        data: list = await asyncio.gather(future_data)
+        embed = Embed(title=user)
+        embed.set_thumbnail(url=user.avatar.url)
 
-        embed = Embed(title=target, color=Colour.from_str(data[0]["banner_color"]))
-        embed.set_thumbnail(url=target.avatar.url)
+        if user.banner: embed.set_image(url=user.banner.url)
 
-        if target.banner: embed.set_image(url=target.banner.url)
-
-        embed.add_field(name='User', value=f'''
-**ID:** {target.id}
-**Type:** {"Bot" if target.bot else "User"}
+        embed.add_field(name='User', inline=True, value=f'''
+**ID:** {user.id}
+**Type:** {"Bot" if user.bot else "User"}
+**Flags:** {' '.join(list(map(lambda flag: constants.user_flags[flag], user.public_flags.all()))) or 'None'}
+**Created at:** <t:{round(user.created_at.timestamp())}> - <t:{round(user.created_at.timestamp())}:R>
         '''
         )
+
+        avatars = [f'[Default]({user.avatar.with_size(1024).url})']
+
+        if interaction.guild and interaction.guild.get_member(user.id) is not None:
+            member = (await interaction.guild.fetch_member(user.id))
+
+            embed.color = member.color
+
+            embed.add_field(name='Server', inline=True, value=f'''
+**Nick:** {member.nick or 'None'}
+**Boosting:** {f"<t:{round(member.premium_since)}> - <t:{round(member.premium_since)}:R>" if member.premium_since else 'No'}
+**Joined at:** <t:{round(member.joined_at.timestamp())}> - <t:{round(member.joined_at.timestamp())}:R>
+            '''              
+            )
 
         return embed
     
@@ -52,7 +63,7 @@ class Information(commands.Cog):
         target='Who you want to check the information of; if not provided, defaults to yourself'
     )
     async def user(self, interaction: Interaction, target: User = None):
-        user_embed = (await self.show_user_information(self.bot, interaction, target or interaction.user))
+        user_embed = (await self.show_user_information(interaction, target or interaction.user))
 
         await interaction.response.send_message(embed=user_embed)
 
