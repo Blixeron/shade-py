@@ -13,10 +13,7 @@ class Information(commands.Cog):
     def __init__(self, bot: Dust):
         self.bot: Dust = bot
     
-    @app_commands.command(
-        name='ping',
-        description='Check the bot latency'
-    )
+    @app_commands.command(name='ping', description='Check the latency of the bot')
     async def ping(self, interaction: Interaction):
         await interaction.response.send_message(
             f'Hey! Latency is {round(self.bot.latency * 1000)}ms.'

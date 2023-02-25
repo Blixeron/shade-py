@@ -1,7 +1,7 @@
 from __future__ import annotations
 from discord import *
 from discord.ext import commands
-import utils.http
+import utils.http as http
 import random
 import asyncio
 from typing import TYPE_CHECKING
@@ -34,7 +34,7 @@ class Fun(commands.Cog):
         ]
 
         await interaction.response.send_message(
-            f'{question if question.endswith("?") else f"{question}?"}\n**{random.choice(answers)}**'
+            f'{question if question.endswith("?") else f"{question}?"}\n🎱 **{random.choice(answers)}**'
         )
 
     @app_commands.command(name='how', description='Rate how much of anything is someone or something')
@@ -52,15 +52,14 @@ class Fun(commands.Cog):
             f'{target} is **{random.randint(0, 100)}%** {input}.'
         )
 
-    @app_commands.command(name='cat', description='Show a cat image and a cat fact. 😺')
+    @app_commands.command(name='cat', description='Show a cat image and a cat fact 😺')
     async def cat(self, interaction: Interaction):
         await interaction.response.defer()
 
-        future_fact = utils.http.get_json('https://catfact.ninja/fact')
-        future_image = utils.http.get_json('https://api.thecatapi.com/v1/images/search?limit=1&size=full', {
+        future_fact = http.get_json('https://catfact.ninja/fact')
+        future_image = http.get_json('https://api.thecatapi.com/v1/images/search?limit=1&size=full', {
             'x-api-key': self.bot.config.cat_api_key
         })
-
         fact_json, image_json = await asyncio.gather(future_fact, future_image)
 
         embed = Embed(title='Cat fact!', description=fact_json['fact'])
@@ -68,21 +67,37 @@ class Fun(commands.Cog):
 
         await interaction.followup.send(embed=embed)
 
-    @app_commands.command(name='dog', description='Show a dog image and a dog fact. 🐶')
+    @app_commands.command(name='dog', description='Show a dog image and a dog fact 🐶')
     async def dog(self, interaction: Interaction):
         await interaction.response.defer()
 
-        future_fact = utils.http.get_json('https://dog-api.kinduff.com/api/facts')
-        future_image = utils.http.get_json('https://api.thedogapi.com/v1/images/search?limit=1&size=full', {
+        future_fact = http.get_json('https://dog-api.kinduff.com/api/facts')
+        future_image = http.get_json('https://api.thedogapi.com/v1/images/search?limit=1&size=full', {
             'x-api-key': self.bot.config.cat_api_key
         })
-
         fact_json, image_json = await asyncio.gather(future_fact, future_image)
 
         embed = Embed(title='Dog fact!', description=fact_json['facts'][0])
         embed.set_image(url=image_json[0]['url'])
 
         await interaction.followup.send(embed=embed)
+
+    @app_commands.command(name='meme', description='Show a random meme from Reddit')
+    async def meme(self, interaction: Interaction):
+        future_meme = http.get_json(f'https://meme-api.com/gimme/{random.choice(["meme", "memes"])}')
+        meme_json = await asyncio.gather(future_meme)
+        meme = list(filter(lambda meme: not meme['nsfw'], meme_json))
+
+        embed = Embed(title=meme[0]['title'], description=f'''
+**By [u/{meme[0]['author']}](https://reddit.com/user/{meme[0]['author']} "{meme[0]['author']}")**
+[Jump to post]({meme[0]['postLink']})
+        '''
+        )
+
+        embed.set_image(url=meme[0]['url'])
+        embed.set_footer(text=f'{meme[0]["ups"]} upvotes')
+
+        await interaction.response.send_message(embed=embed)
 
 async def setup(bot):
     await bot.add_cog(Fun(bot))
