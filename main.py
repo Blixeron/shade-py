@@ -23,7 +23,7 @@ class Dust(commands.Bot):
 
     async def on_ready(self):
         print(f'{self.user} is ready. ID: {self.user.id}')
-
+        
 bot = Dust()
 
 bot.run(config.token)

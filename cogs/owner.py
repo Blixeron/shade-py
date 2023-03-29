@@ -2,6 +2,7 @@ from __future__ import annotations
 from discord.ext import commands
 from discord import *
 from contextlib import redirect_stdout
+import utils.http as http
 import io
 import textwrap
 import traceback
@@ -82,6 +83,7 @@ class Owner(commands.Cog):
     async def evaluate(self, ctx: commands.Context, *, body: str):
         """Evaluates code."""
         env = {
+            'http': http,
             'self': self,
             'bot': self.bot,
             'ctx': ctx,
