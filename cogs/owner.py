@@ -12,13 +12,13 @@ import subprocess
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from main import Dust
+    from main import Shade
 
 class Owner(commands.Cog):
     """Commands for the bot developer."""
 
-    def __init__(self, bot: Dust):
-        self.bot: Dust = bot
+    def __init__(self, bot: Shade):
+        self.bot: Shade = bot
 
     @property
     async def run_process(self, command: str) -> list[str]:

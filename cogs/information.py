@@ -5,13 +5,13 @@ import assets.constants as constants
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from main import Dust
+    from main import Shade
 
 class Information(commands.Cog):
     """This Cog has commands that show information from different sources."""
 
-    def __init__(self, bot: Dust):
-        self.bot: Dust = bot
+    def __init__(self, bot: Shade):
+        self.bot: Shade = bot
 
         self.user_ctx_menu = app_commands.ContextMenu(
             name='User Information',

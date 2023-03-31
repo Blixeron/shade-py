@@ -1,4 +1,4 @@
-# Dust, my personal Discord bot, written in Python, using Discord.py
+# Shade, my personal Discord bot, written in Python, using Discord.py
 
 ## Instalation
 

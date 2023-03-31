@@ -7,13 +7,13 @@ import asyncio
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from main import Dust
+    from main import Shade
 
 class Fun(commands.Cog):
     """Commands made for fun and enjoyment."""
 
-    def __init__(self, bot: Dust):
-        self.bot: Dust = bot
+    def __init__(self, bot: Shade):
+        self.bot: Shade = bot
 
     @app_commands.command(name='8ball', description='Ask the magic 8 Ball a question')
     @app_commands.describe(question='Ask something')

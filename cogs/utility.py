@@ -5,13 +5,13 @@ from typing import *
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from main import Dust
+    from main import Shade
 
 class Utility(commands.Cog):
     """The description for Utility goes here."""
 
-    def __init__(self, bot: Dust):
-        self.bot: Dust = bot
+    def __init__(self, bot: Shade):
+        self.bot: Shade = bot
 
         self.avatar_ctx_menu = app_commands.ContextMenu(
             name='User Avatar',

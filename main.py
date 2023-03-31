@@ -3,7 +3,7 @@ from discord import *
 from discord.ext import commands
 import config
 
-class DustTree(app_commands.CommandTree):
+class ShadeTree(app_commands.CommandTree):
     async def on_error(self, interaction: Interaction, error: app_commands.AppCommandError):
         if isinstance(error, app_commands.BotMissingPermissions):
             missing = [perm.replace('_', ' ').replace('guild', 'server').title() for perm in error.missing_permissions]
@@ -20,14 +20,14 @@ class DustTree(app_commands.CommandTree):
         else:
             super().on_error()
 
-class Dust(commands.Bot):
+class Shade(commands.Bot):
     def __init__(self):
         super().__init__(
             command_prefix='$',
             help_command=None,
             intents=Intents.all(),
             application_id=config.app_id,
-            tree_cls=DustTree
+            tree_cls=ShadeTree
         )
         
         self.config = config
@@ -42,6 +42,6 @@ class Dust(commands.Bot):
     async def on_ready(self):
         print(f'{self.user} is ready. ID: {self.user.id}')
         
-bot = Dust()
+bot = Shade()
 
 bot.run(config.token)
