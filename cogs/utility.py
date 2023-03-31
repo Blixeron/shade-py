@@ -12,11 +12,11 @@ class Utility(commands.Cog):
 
     def __init__(self, bot: Dust):
         self.bot: Dust = bot
+
         self.avatar_ctx_menu = app_commands.ContextMenu(
             name='User Avatar',
             callback=self.user_avatar
         )
-
         self.bot.tree.add_command(self.avatar_ctx_menu)
 
     async def cog_unload(self):
@@ -83,8 +83,8 @@ class Utility(commands.Cog):
 
         await interaction.response.send_message(embed=embed)
 
-    async def user_avatar(self, interaction: Interaction, user: User):
-        avatar = (await self.show_avatar(interaction, user))
+    async def user_avatar(self, interaction: Interaction, target: User):
+        avatar = (await self.show_avatar(interaction, target))
 
         embed = Embed(
             title=avatar['target'],
