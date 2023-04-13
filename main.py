@@ -18,7 +18,7 @@ class ShadeTree(app_commands.CommandTree):
                 ephemeral=True
             )
         else:
-            super().on_error()
+            await super().on_error(interaction, error)
 
 class Shade(commands.Bot):
     def __init__(self):

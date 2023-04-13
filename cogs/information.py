@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from main import Shade
 
 class Information(commands.Cog):
-    """This Cog has commands that show information from different sources."""
+    """This Cog has commands that show information from Discord."""
 
     def __init__(self, bot: Shade):
         self.bot: Shade = bot
@@ -29,10 +29,9 @@ class Information(commands.Cog):
         )
 
     async def show_user_information(self, interaction: Interaction, target: User or Member):
-        user = await interaction.client.fetch_user(target.id)
+        user = await self.bot.fetch_user(target.id)
 
         embed = Embed(title=user)
-
         embed.set_thumbnail(url=user.avatar.url if user.avatar else user.default_avatar.url)
 
         if user.banner: embed.set_image(url=user.banner.url)
@@ -49,7 +48,6 @@ class Information(commands.Cog):
             member = (await interaction.guild.fetch_member(user.id))
 
             embed.color = member.color
-
             embed.add_field(name='Server', inline=True, value=f'''
 **Nick:** {member.nick or 'None'}
 **Boosting:** {f"<t:{round(member.premium_since)}> - <t:{round(member.premium_since)}:R>" if member.premium_since else 'No'}

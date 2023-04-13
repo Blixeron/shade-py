@@ -1,9 +1,8 @@
 from __future__ import annotations
 from discord import *
 from discord.ext import commands
-import utils.http as http
 import random
-import asyncio
+import requests
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -22,12 +21,11 @@ class Fun(commands.Cog):
             'It is certain.', 'It is decidedly so.', 'Without a doubt.',
             'Yes - definitely.', 'You may rely on it.', 'As I see it, yes.',
             'Most likely.', "I don't think so.", 'It is decidedly not.',
-            'Outlook not so good.', 'Yes.', 'No.',
-            'Take this 🛏️, so you can keep dreaming.', 'Yeah... no.', 'Bruh.',
-            'Signs point to yes.', 'Reply hazy, try again.', 'Ask again later.',
-            'Better not tell you now.', 'Cannot predict now.', 'Concentrate and ask again.',
-            "Don't count on it.", 'My sources say no.', 'Of course.',
-            'Outlook good.', "Don't bet on it.", 'Yes, definitely.',
+            'Yes.', 'No.', 'Take this 🛏️, so you can keep dreaming.', 'Yeah... no.',
+            'Bruh.', 'Signs point to yes.', 'Reply hazy, try again.',
+            'Ask again later.', 'Better not tell you now.', 'Cannot predict now.',
+            'Concentrate and ask again.', "Don't count on it.", 'My sources say no.',
+            'Of course.', "Don't bet on it.", 'Yes, definitely.',
             'My reply is no.', "I don't know.", "I don't care.",
             'What the hell is this question?', 'Are you seriously asking this?', "I'm not sure.",
             '✨ Y E S ✨', '✨ N O ✨', '✨ I D K ✨'
@@ -56,14 +54,13 @@ class Fun(commands.Cog):
     async def cat(self, interaction: Interaction):
         await interaction.response.defer()
 
-        future_fact = http.get_json('https://catfact.ninja/fact')
-        future_image = http.get_json('https://api.thecatapi.com/v1/images/search?limit=1&size=full', {
+        fact = requests.get('https://catfact.ninja/fact')
+        image = requests.get('https://api.thecatapi.com/v1/images/search?limit=1&size=full', headers={
             'x-api-key': self.bot.config.cat_api_key
         })
-        fact_json, image_json = await asyncio.gather(future_fact, future_image)
 
-        embed = Embed(title='Cat fact!', description=fact_json['fact'])
-        embed.set_image(url=image_json[0]['url'])
+        embed = Embed(title='Cat fact!', description=fact.json()['fact'])
+        embed.set_image(url=image.json()[0]['url'])
 
         await interaction.followup.send(embed=embed)
 
@@ -71,31 +68,28 @@ class Fun(commands.Cog):
     async def dog(self, interaction: Interaction):
         await interaction.response.defer()
 
-        future_fact = http.get_json('https://dog-api.kinduff.com/api/facts')
-        future_image = http.get_json('https://api.thedogapi.com/v1/images/search?limit=1&size=full', {
+        fact = requests.get('https://dog-api.kinduff.com/api/facts')
+        image = requests.get('https://api.thedogapi.com/v1/images/search?limit=1&size=full', headers={
             'x-api-key': self.bot.config.cat_api_key
         })
-        fact_json, image_json = await asyncio.gather(future_fact, future_image)
 
-        embed = Embed(title='Dog fact!', description=fact_json['facts'][0])
-        embed.set_image(url=image_json[0]['url'])
+        embed = Embed(title='Dog fact!', description=fact.json()['facts'][0])
+        embed.set_image(url=image.json()[0]['url'])
 
         await interaction.followup.send(embed=embed)
 
     @app_commands.command(name='meme', description='Show a random meme from Reddit')
     async def meme(self, interaction: Interaction):
-        future_meme = http.get_json(f'https://meme-api.com/gimme/{random.choice(["meme", "memes"])}')
-        meme_json = await asyncio.gather(future_meme)
-        meme = list(filter(lambda meme: not meme['nsfw'], meme_json))
+        meme = requests.get(f'https://meme-api.com/gimme/{random.choice(["meme", "memes"])}').json()
 
-        embed = Embed(title=meme[0]['title'], description=f'''
-**By [u/{meme[0]['author']}](https://reddit.com/user/{meme[0]['author']} "{meme[0]['author']}")**
-[Jump to post]({meme[0]['postLink']})
+        embed = Embed(title=meme['title'], description=f'''
+**By [u/{meme['author']}](https://reddit.com/user/{meme['author']} "{meme['author']}")**
+[Jump to post]({meme['postLink']})
         '''
         )
 
-        embed.set_image(url=meme[0]['url'])
-        embed.set_footer(text=f'{meme[0]["ups"]} upvotes')
+        embed.set_image(url=meme['url'])
+        embed.set_footer(text=f'{meme["ups"]} upvotes')
 
         await interaction.response.send_message(embed=embed)
 

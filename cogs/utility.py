@@ -1,8 +1,7 @@
 from __future__ import annotations
 from discord.ext import commands
 from discord import *
-from typing import *
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 
 if TYPE_CHECKING:
     from main import Shade
@@ -49,14 +48,13 @@ class Utility(commands.Cog):
         else:
             extension = 'GIF' if avatar_hash.startswith('a_') else 'PNG'
 
-        return {
-            'url': f'{avatar.with_format(extension.lower()).with_size(size)}',
-            'target': target,
-            'size': size,
-            'format': format,
-            'server': server,
-            'property': avatar
-        }
+        embed = Embed(
+            title=target,
+            description=f'''**{size}** pixels, in **{format}** format
+{"**Server Avatar**" if avatar is Member.guild_avatar else "**Default Avatar**"}'''
+        ).set_image(url=avatar.with_format(extension.lower()).with_size(size))
+
+        return embed
 
     @app_commands.command(name='avatar', description='Show the avatar of someone')
     @app_commands.describe(
@@ -73,24 +71,12 @@ class Utility(commands.Cog):
         format: Literal['JPG', 'PNG', 'JPEG', 'WEBP', 'GIF'] = 'PNG' or 'GIF',
         server: bool = False
     ):
-        avatar = (await self.show_avatar(interaction, target or interaction.user, size or 1024, format or None, server))
-
-        embed = Embed(
-            title=avatar['target'],
-            description=f'''**{avatar["size"]}** pixels, in **{avatar["format"]}** format
-{"**Server Avatar**" if avatar["property"] is Member.guild_avatar else "**Default Avatar**"}'''
-        ).set_image(url=avatar["url"])
+        embed = (await self.show_avatar(interaction, target or interaction.user, size or 1024, format or None, server))
 
         await interaction.response.send_message(embed=embed)
 
     async def user_avatar(self, interaction: Interaction, target: User):
-        avatar = (await self.show_avatar(interaction, target))
-
-        embed = Embed(
-            title=avatar['target'],
-            description=f'''**{avatar["size"]}** pixels, in **{avatar["format"]}** format
-{"**Server Avatar**" if avatar["property"] is Member.guild_avatar else "**Default Avatar**"}'''
-        ).set_image(url=avatar["url"])
+        embed = (await self.show_avatar(interaction, target))
 
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
