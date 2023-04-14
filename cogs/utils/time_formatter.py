@@ -1,11 +1,9 @@
 import dateutil.parser
-
-import time
 import calendar
 
 def iso_to_timestamp(date):
     iso = dateutil.parser.parse(date)
-    timestamp = time.mktime(iso.timetuple())
+    timestamp = iso.timestamp()
 
     return timestamp
 
