@@ -20,11 +20,13 @@ class Lookup(commands.Cog):
         input = search.split('/')
 
         if len(input) < 2:
-            res = requests.get(f'https://api.github.com/users/{input[0]}')
+            res = requests.get(f'https://api.github.com/users/{input[0]}', headers={
+                'Authorization': f'Bearer {self.bot.config.github_token}'
+            })
             
             if res.status_code != 200:
                 await interaction.response.send_message(
-                    'An error occurred while requesting the information, or the user could not be found.',
+                    'An error occurred while requesting the information, or the user does not exist.',
                     ephemeral=True
                 )
             else:
@@ -68,6 +70,53 @@ class Lookup(commands.Cog):
 
                 embed.add_field(name='Links', value=f'''
 **[User Overview]({lookup['html_url']})**{f' - **[Website]({lookup["blog"]})**' if lookup['blog'] else ''}
+                '''
+                )
+
+                await interaction.response.send_message(embed=embed)
+        else:
+            res = requests.get(f'https://api.github.com/repos/{input[0]}/{input[1]}', headers={
+                'Authorization': f'Bearer {self.bot.config.github_token}'
+            })
+
+            if res.status_code != 200:
+                await interaction.response.send_message(
+                    'An error occurred while requesting the information, the user does not exist or the repository could not be found.',
+                    ephemeral=True
+                )
+            else:
+                lookup = res.json()
+
+                embed = Embed(title=lookup['full_name'], description=lookup['description'] or None)
+                
+                embed.add_field(name='Overview', inline=False, value=f'''
+**Owner:** [{lookup['owner']['login']}]({lookup['owner']['html_url']})
+**Topics:** {' - '.join(lookup['topics']) if lookup['topics'] else None}
+**Created at:** <t:{round(iso_to_timestamp(lookup['created_at']))}> - <t:{round(iso_to_timestamp(lookup['created_at']))}:R>
+**Last push:** <t:{round(iso_to_timestamp(lookup['pushed_at']))}> - <t:{round(iso_to_timestamp(lookup['pushed_at']))}:R>
+                '''
+                )
+
+                embed.add_field(name='Repository Details', value=f'''
+**Language:** {lookup['language'] or 'Unknown'}
+**Default branch:** {lookup['default_branch']}
+**Is a fork:** {'Yes' if lookup['fork'] else 'No'}
+**Is forkable:** {'Yes' if lookup['allow_forking'] else 'No'}
+**License:** {lookup['license']['name'] if lookup['license'] else None}
+                '''
+                )
+
+                embed.add_field(name='Counts', inline=True, value=f'''
+**Issues:** {lookup['open_issues']}
+**Watchers:** {lookup['watchers']}
+**Subscribers:** {lookup['subscribers_count']}
+**Forks:** {lookup['forks']}
+                '''
+                )
+
+                embed.add_field(name='Links', value=f'''
+**[Repository Overview]({lookup['html_url']})**
+{f'**[Homepage]({lookup["homepage"]})**' if lookup['homepage'] else ''}
                 '''
                 )
 
