@@ -169,10 +169,10 @@ class Owner(commands.Cog):
 
             if ret is None:
                 if value:
-                    await ctx.reply(f'```py\n{value}\n```')
+                    await ctx.reply(f'```py\n{value[0:1900]}\n```')
             else:
                 self._last_result = ret
-                await ctx.reply(f'```py\n{value}{ret}\n```')
+                await ctx.reply(f'```py\n{f"{value}{ret}"[0:1900]}\n```')
 
 async def setup(bot):
     await bot.add_cog(Owner(bot))

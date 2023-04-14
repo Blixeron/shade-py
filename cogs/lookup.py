@@ -4,6 +4,7 @@ from discord import *
 from typing import TYPE_CHECKING
 from .utils.time_formatter import iso_to_timestamp
 import requests
+import base64
 
 if TYPE_CHECKING:
     from main import Shade
@@ -120,7 +121,20 @@ class Lookup(commands.Cog):
                 '''
                 )
 
-                await interaction.response.send_message(embed=embed)
+                res = requests.get(f'https://api.github.com/repos/{input[0]}/{input[1]}/contents/README.md', headers={
+                    'Authorization': f'Bearer {self.bot.config.github_token}'
+                })
+
+                if res.status_code != 200:
+                    await interaction.response.send_message(embed=embed)
+                else:
+                    readme = res.json()
+
+                    decrypted_readme = base64.b64decode(readme['content']).decode()
+
+                    readme_embed = Embed(title='README.md', description=f'{decrypted_readme}'[0:2000])
+
+                    await interaction.response.send_message(embeds=[embed, readme_embed])
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Lookup(bot))
