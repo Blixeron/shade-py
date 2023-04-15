@@ -16,6 +16,7 @@ guild_id = '' # The development server ID
 app_id = '' # The ID of your bot
 dev_id = '' # Your own ID
 cat_api_key = '' # The API Key for https://thecatapi.com
+github_token = '' # Your (classic) token to execute GitHub API requests
 ```
 
 You will be able to use the configuration variables inside of other files by using `self.bot.config` property.

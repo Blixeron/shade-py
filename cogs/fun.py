@@ -17,23 +17,19 @@ class Fun(commands.Cog):
     @app_commands.command(name='8ball', description='Ask the magic 8 Ball a question')
     @app_commands.describe(question='Ask something')
     async def eightball(self, interaction: Interaction, question: app_commands.Range[str, 0, 1000]):
-        answers = [
-            'It is certain.', 'It is decidedly so.', 'Without a doubt.',
-            'Yes - definitely.', 'You may rely on it.', 'As I see it, yes.',
-            'Most likely.', "I don't think so.", 'It is decidedly not.',
-            'Yes.', 'No.', 'Take this 🛏️, so you can keep dreaming.', 'Yeah... no.',
-            'Bruh.', 'Signs point to yes.', 'Reply hazy, try again.',
-            'Ask again later.', 'Better not tell you now.', 'Cannot predict now.',
-            'Concentrate and ask again.', "Don't count on it.", 'My sources say no.',
-            'Of course.', "Don't bet on it.", 'Yes, definitely.',
-            'My reply is no.', "I don't know.", "I don't care.",
-            'What the hell is this question?', 'Are you seriously asking this?', "I'm not sure.",
-            '✨ Y E S ✨', '✨ N O ✨', '✨ I D K ✨'
-        ]
+        res = requests.get(f'https://eightballapi.com/api?question={question}&lucky=false')
 
-        await interaction.response.send_message(
-            f'{question if question.endswith("?") else f"{question}?"}\n🎱 **{random.choice(answers)}**'
-        )
+        if res.status_code != 200:
+            interaction.response.send_message(
+                'Oops, looks like I dropped the 8-ball... Maybe come back later?',
+                ephemeral=True
+            )
+        else:
+            answer = res.json()
+            
+            await interaction.response.send_message(
+                f'{question if question.endswith("?") else f"{question}?"}\n🎱 **{answer["reading"]}**'
+            )
 
     @app_commands.command(name='how', description='Rate how much of anything is someone or something')
     @app_commands.describe(
