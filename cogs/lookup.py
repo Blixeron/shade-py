@@ -15,7 +15,7 @@ class Lookup(commands.Cog):
     def __init__(self, bot: Shade):
         self.bot: Shade = bot
 
-    @app_commands.command(description='Check information from a GitHub user or repository')
+    @app_commands.command(name='github', description='Check information from a GitHub user or repository')
     @app_commands.describe(search='What to search for; {username} for user lookup, and {username}/{repository} for repository lookup')
     async def github(self, interaction: Interaction, search: str):
         input = search.split('/')
@@ -132,7 +132,10 @@ class Lookup(commands.Cog):
 
                     decrypted_readme = base64.b64decode(readme['content']).decode()
 
-                    readme_embed = Embed(title='README.md', description=f'{decrypted_readme}'[0:2000])
+                    readme_embed = Embed(title='README.md', description=f'{decrypted_readme}'[:4096])
+
+                    if len(decrypted_readme) > 4096:
+                        embed.set_footer(text='The README.md length was reduced to 4096 characters.')
 
                     await interaction.response.send_message(embeds=[embed, readme_embed])
 
