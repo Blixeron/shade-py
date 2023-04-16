@@ -15,7 +15,7 @@ class Lookup(commands.Cog):
     def __init__(self, bot: Shade):
         self.bot: Shade = bot
 
-    @app_commands.command(name='github', description='Check information from a GitHub user or repository')
+    @app_commands.command(description='Check information from a GitHub user or repository')
     @app_commands.describe(search='What to search for; {username} for user lookup, and {username}/{repository} for repository lookup')
     async def github(self, interaction: Interaction, search: str):
         input = search.split('/')

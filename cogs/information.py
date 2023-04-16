@@ -1,7 +1,9 @@
 from __future__ import annotations
 from discord.ext import commands
 from discord import *
+import discord
 import assets.constants as constants
+import sys
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -22,11 +24,41 @@ class Information(commands.Cog):
     async def cog_unload(self):
         self.bot.tree.remove_command(self.user_ctx_menu.name, type=self.user_ctx_menu.type)
     
-    @app_commands.command(name='ping', description='Check the latency of the bot')
+    @app_commands.command(description='Check the latency of the bot')
     async def ping(self, interaction: Interaction):
         await interaction.response.send_message(
             f'Hey! Latency is **{round(self.bot.latency * 1000)}ms.**'
         )
+
+    @app_commands.command(description='Show information about Shade')
+    async def about(self, interaction: Interaction):
+        embed = Embed(title='Information about me', description=f'{self.bot.application.description}\n\n'
+                      '[Check out my GitHub Repository!](https://github.com/Drazkai/shade)')
+
+        embed.set_thumbnail(url=self.bot.user.avatar.url)
+
+        embed.add_field(name='Development', inline=True, value=f'''
+**Developer:** [{self.bot.application.owner}](https://discord.com/users/{self.bot.owner_id})
+**Running on:** Python {sys.version_info[0]}.{sys.version_info[1]}.{sys.version_info[2]}
+**Library:** discord.py {discord.__version__}
+        '''
+        )
+
+        embed.add_field(name='Counts', inline=False, value=f'''
+**Servers I'm in:** {len(self.bot.guilds)}
+**Users I'm helping:** {len(list(filter(lambda user: not user.bot, self.bot.users)))}
+**Total commands:** {len(self.bot.tree._get_all_commands())}
+**Total cogs:** {len(self.bot.cogs)}
+        '''
+        )
+
+        embed.add_field(name='Connection', value=f'''
+**Up since:** <t:{self.bot.uptime}> - <t:{self.bot.uptime}:R>
+**Latency:** {round(self.bot.latency * 1000)}ms
+        '''
+        )
+
+        await interaction.response.send_message(embed=embed)
 
     async def show_user_information(self, interaction: Interaction, target: User or Member):
         user = await self.bot.fetch_user(target.id)
@@ -57,10 +89,7 @@ class Information(commands.Cog):
 
         return embed
     
-    @app_commands.command(
-        name='user',
-        description='Show information about a Discord user'
-    )
+    @app_commands.command(description='Show information about a Discord user')
     @app_commands.describe(
         target='Who you want to check the information of; if not provided, defaults to yourself'
     )

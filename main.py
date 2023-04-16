@@ -1,7 +1,10 @@
 import os
+import time
 from discord import *
 from discord.ext import commands
 import config
+
+initial_time = time.time()
 
 class ShadeTree(app_commands.CommandTree):
     async def on_error(self, interaction: Interaction, error: app_commands.AppCommandError):
@@ -27,10 +30,16 @@ class Shade(commands.Bot):
             help_command=None,
             intents=Intents.all(),
             application_id=config.app_id,
-            tree_cls=ShadeTree
+            tree_cls=ShadeTree,
+            owner_id=config.dev_id
         )
         
         self.config = config
+
+    @property
+    def uptime(self):
+        """Timestamp of when the bot started running."""
+        return round(time.time() - (time.time() - initial_time))
 
     async def setup_hook(self):
         for file in os.listdir('./cogs'):

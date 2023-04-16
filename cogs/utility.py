@@ -56,7 +56,7 @@ class Utility(commands.Cog):
 
         return embed
 
-    @app_commands.command(name='avatar', description='Show the avatar of someone')
+    @app_commands.command(description='Show the avatar of someone')
     @app_commands.describe(
         target='Who you want to check the avatar of; if not provided, defaults to yourself',
         size='Size of the image, defaults to 1024 pixels',
@@ -79,6 +79,36 @@ class Utility(commands.Cog):
         embed = (await self.show_avatar(interaction, target))
 
         await interaction.response.send_message(embed=embed, ephemeral=True)
+
+    @app_commands.guild_only
+    @app_commands.command(description='Show the current server icon')
+    @app_commands.describe(
+        size='Size of the image, defaults to 1024 pixels',
+        format='Format of the image, defaults to png or gif if the avatar is animated'
+    )
+    async def icon(
+        self,
+        interaction: Interaction,
+        size: Literal[128, 256, 512, 1024, 2048, 4096] = 1024,
+        format: Literal['JPG', 'PNG', 'JPEG', 'WEBP', 'GIF'] = 'PNG' or 'GIF'
+    ):
+        if not interaction.guild.icon:
+            await interaction.response.send_message('This server does not have an icon.', ephemeral=True)
+        else:
+            extension = format
+
+            if format:
+                if format == 'GIF':
+                    extension = 'GIF' if interaction.guild.icon.key.startswith('a_') else 'PNG'
+            else:
+                extension = 'GIF' if interaction.guild.icon.key.startswith('a_') else 'PNG'
+
+            embed = Embed(
+                title=interaction.guild.name,
+                description=f'**{size}** pixels, in **{format}** format'
+            ).set_image(url=interaction.guild.icon.with_format(extension.lower()).with_size(size))
+
+            await interaction.response.send_message(embed=embed)
 
 async def setup(bot):
     await bot.add_cog(Utility(bot))
